@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.room)
     alias(libs.plugins.detekt)
     alias(libs.plugins.about.libraries)
-    alias(libs.plugins.kotlinx.serialization)
+    // Removed the kotlinx.serialization alias to fix unresolved reference
 }
 
 android {
@@ -159,7 +159,7 @@ dependencies {
     implementation(libs.truetype.parser)
     implementation(libs.fsaf)
 
-    // Added Compose Foundation for gesture detection support:
+    // Compose foundation dependency for gestures support
     implementation("androidx.compose.foundation:foundation:${libs.versions.composeBom.get()}")
     implementation("androidx.compose.ui:ui-graphics:${libs.versions.composeBom.get()}")
 }
