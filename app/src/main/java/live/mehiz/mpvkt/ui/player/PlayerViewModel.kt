@@ -25,7 +25,6 @@ class PlayerViewModel(
     private val advancedPreferences: AdvancedPreferences,
 ) : ViewModel() {
 
-    // Existing Playback States, UI States and relevant fields (Add or adjust as per your actual ViewModel)
     val paused = MutableStateFlow(false)
     val pos = MutableStateFlow<Int?>(null)
     val duration = MutableStateFlow<Int?>(null)
@@ -49,70 +48,33 @@ class PlayerViewModel(
     val audioTracks = MutableStateFlow<List<AudioTrack>>(emptyList())
     val remainingTime = MutableStateFlow(0L)
 
-    val maxVolume = 150 // Example max volume; adjust according to your app settings
+    val maxVolume = 150
 
-    // --- START OF NEW ZOOM AND PAN STATES ---
-
+    // Zoom and pan state management
     private val _videoZoom = MutableStateFlow(1f)
     val videoZoom: StateFlow<Float> = _videoZoom.asStateFlow()
 
     private val _videoPan = MutableStateFlow(Offset.Zero)
     val videoPan: StateFlow<Offset> = _videoPan.asStateFlow()
 
-    /**
-     * Update the video zoom scale and pan offset.
-     * Scale: zoom from 0.5 (50%) to 2.0 (200%)
-     * Offset: pan movement within bounds, values in pixels
-     */
     fun updateVideoTransformation(scale: Float, offset: Offset) {
         _videoZoom.update { scale }
         _videoPan.update { offset }
 
-        // Update MPV properties to reflect zoom and pan
-        // MPVLib expects double values for these properties
         MPVLib.setPropertyDouble("video-zoom", (scale - 1.0).toDouble())
-        // Dividing offset values by 1000 for proper scaling - adjust if needed by testing
         MPVLib.setPropertyDouble("video-pan-x", (offset.x / 1000.0).toDouble())
         MPVLib.setPropertyDouble("video-pan-y", (offset.y / 1000.0).toDouble())
     }
 
-    /**
-     * Resets video zoom and pan to default (1.0x zoom, zero pan)
-     */
     fun resetVideoTransformation() {
         updateVideoTransformation(1f, Offset.Zero)
     }
 
-    /**
-     * Toggles zoom/pan reset: resets if zoomed or panned, otherwise does nothing
-     */
     fun toggleZoomPan() {
         if (_videoZoom.value != 1f || _videoPan.value != Offset.Zero) {
             resetVideoTransformation()
         }
     }
 
-    // --- END OF NEW ZOOM AND PAN STATES ---
-
-    // Add the rest of your existing code and methods below here...
-    // Ensure to keep in sync with existing implementation or adapt integration where needed
-    
-    // Example method placeholders (replace with your actual implementations)
-    fun pauseUnpause() {
-        val currentlyPaused = paused.value
-        viewModelScope.launch {
-            paused.emit(!currentlyPaused)
-            MPVLib.setPropertyBoolean("pause", !currentlyPaused)
-        }
-    }
-
-    fun seekTo(position: Int, precise: Boolean) {
-        MPVLib.setPropertyInt("time-pos", position)
-        if (precise) {
-            // Additional precise seeking logic if any
-        }
-    }
-
-    // Further existing ViewModel logic here...
-
+    // ...Insert your other existing ViewModel methods here (pauseUnpause, seekTo, etc)...
 }
